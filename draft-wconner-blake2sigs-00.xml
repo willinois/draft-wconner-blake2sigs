@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC2313 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2313.xml">
+<!ENTITY RFC4055 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4055.xml">
+<!ENTITY RFC7693 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7693.xml">
+<!ENTITY RFC8032 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8032.xml">
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc strict="yes" ?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="3"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
+<rfc category="info" docName="draft-wconner-blake2sigs-00" ipr="trust200902">
+  <front>
+    <title abbrev="">
+      BLAKE2 Algorithms and Identifiers for use in the Internet X.509 Public Key
+      Infrastructure Certificate and Certificate Revocation List (CRL) Profile
+    </title>
+
+    <author fullname="William Conner" initials="W." surname="Conner">
+      <organization>Google</organization>
+      <address>
+        <postal>
+          <street>320 N Morgan St #600</street>
+          <city>Chicago</city>
+          <region>IL</region>
+          <code>60607</code>
+          <country>USA</country>
+        </postal>
+        <email>wconner@google.com</email>
+      </address>
+    </author>
+    <author fullname="Adam Langley" initials="A." surname="Langley">
+      <organization>Google</organization>
+      <address>
+        <postal>
+          <street>340 Main St</street>
+          <city>Venice</city>
+          <region>CA</region>
+          <code>90291</code>
+          <country>USA</country>
+        </postal>
+        <email>agl@google.com</email>
+      </address>
+    </author>
+    <author fullname="Ryan Sleevi" initials="R." surname="Sleevi">
+      <organization>Google</organization>
+      <address>
+        <postal>
+          <street>200 W Franklin St #300</street>
+          <city>Chapel Hill</city>
+          <region>NC</region>
+          <code>27516</code>
+          <country>USA</country>
+        </postal>
+        <email>sleevi@google.com</email>
+      </address>
+    </author>
+    <author fullname="Andrei Popov" initials="A." surname="Popov">
+      <organization>Microsoft</organization>
+      <address>
+        <postal>
+          <street>One Microsoft Way</street>
+          <city>Redmond</city>
+          <region>WA</region>
+          <code>98052</code>
+          <country>USA</country>
+        </postal>
+        <email>Andrei.Popov@microsoft.com</email>
+      </address>
+    </author>
+
+    <date month="April" year="2017" />
+
+    <area>General</area>
+
+    <keyword>BLAKE2</keyword>
+    <keyword>signature</keyword>
+    <keyword>rsa</keyword>
+    <keyword>ecdsa</keyword>
+    <keyword>eddsa</keyword>
+
+    <abstract>
+      <t>
+        This document describes the conventions for using the BLAKE2b-512 hash
+        function with each of the following signature algorithms:
+        RSA Public-Key Cryptography Standards #1 version 1.5 (RSA PKCS#1 v1.5),
+        RSA Probabilistic Signature Scheme (RSASSA-PSS),
+        RSA Encryption Scheme - Optimal Asymmetric Encryption Padding (RSAES-OAEP),
+        Elliptic Curve Digital Signature Algorithm (ECDSA), and
+        Edwards-curve Digital Signature Algorithm (EdDSA).
+        This specification applies to the Internet X.509 Public Key
+        Infrastructure (PKI) when digital signatures are used to sign
+        certificates and certificate revocation lists (CRLs). This document
+        also specifies the object identifiers (OIDs) for the combinations of
+        the BLAKE2b-512 hash function with the aforementioned signature
+        algorithms.
+      </t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section title="Introduction">
+      <t>
+        The SHA-2 family of hash functions is currently the only secure and
+        widely supported option for digital signatures in the PKIX ecosystem.
+        While there is no reason to be seriously concerned about the security of
+        SHA-2, which is still acceptable according to
+        <xref target="SP-800-131A">NIST SP 800-131A rev. 1</xref>, numerous
+        previous hash functions have eventually suffered from collision attacks
+        and needed to be replaced. Since it takes a very long time to establish
+        support for new primitives in the PKIX ecosystem, it seems prudent to
+        have an alternative prepared.
+      </t>
+
+      <t>
+        This document specifies object identifiers (OIDs) to identify the
+        combination of <xref target="BLAKE2">BLAKE2b-512</xref> with each of
+        RSA PKCS#1 v1.5, RSASSA-PSS, RSAES-OAEP, ECDSA, and EdDSA.
+      </t>
+
+      <t>
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+        document are to be interpreted as described in
+        <xref target="RFC2119"/>.
+      </t>
+    </section>
+
+    <section title="Algorithm Support">
+      <t>
+        This section describes the signature algorithms and corresponding OIDs,
+        which may be used in conjunction with the BLAKE2b-512 hash function. The
+        OIDs will be assigned under the following OID arc, which is based on the
+        OID tree from <xref target="RFC7693"/>.
+      </t>
+
+      <figure>
+        <artwork>
+          <![CDATA[
+             sigAlgs OBJECT IDENTIFIER ::= {
+                 iso(1) identified-organization(3) dod(6) internet(1)
+                 private(4) enterprise(1) kudelski(1722) cryptography(12) 4
+             }
+          ]]>
+        </artwork>
+      </figure>
+
+      <section title="RSA PKCS#1 v1.5">
+        <t>
+          <xref target="RFC2313"/> specifies the RSA PKCS #1 v1.5
+          signature algorithm. This section specifies a single OID to identify
+          the combination of BLAKE2b-512 with RSA PKCS#1 v1.5.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-rsaEncryption-with-blake2b512 OBJECT IDENTIFIER ::= TBD
+            ]]>
+          </artwork>
+        </figure>
+      </section>
+
+      <section title="RSASSA-PSS">
+        <t>
+          <xref target="RFC4055"/> specifies the RSASSA-PSS
+          signature algorithm. This section specifies a single OID to identify
+          the combination of BLAKE2b-512 with RSASSA-PSS.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-RSASSA-PSS-with-blake2b512 OBJECT IDENTIFIER ::= TBD
+            ]]>
+          </artwork>
+        </figure>
+      </section>
+
+      <section title="RSAES-OAEP">
+        <t>
+          <xref target="RFC4055"/> specifies the RSAES-OAEP
+          signature algorithm. This section specifies a single OID to identify
+          the combination of BLAKE2b-512 with RSAES-OAEP.
+        </t>
+
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-RSAEP-OAEP-with-blake2b512 OBJECT IDENTIFIER ::= TBD
+            ]]>
+          </artwork>
+        </figure>
+      </section>
+
+      <section title="ECDSA">
+        <t>
+          <xref target="FIPS-186-4">NIST FIPS PUB 186-4</xref>
+          specifies the ECDSA signature algorithm. This section specifies a
+          single OID to identify the combination of BLAKE2b-512 with ECDSA.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-ecdsa-with-blake2b512 OBJECT IDENTIFIER ::= TBD
+            ]]>
+          </artwork>
+        </figure>
+      </section>
+
+      <section title="EdDSA">
+        <t>
+          <xref target="RFC8032"/> specifies the EdDSA signature
+          algorithm. This section specifies two OIDs to identify the
+          combination of BLAKE2b-512 with the edwards25519 and edwards448
+          curves.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-Ed25519-with-blake2b512 OBJECT IDENTIFIER ::= TBD
+            ]]>
+            <![CDATA[
+               id-Ed448-with-blake2b512 OBJECT IDENTIFIER ::= TBD
+            ]]>
+          </artwork>
+        </figure>
+      </section>
+
+    </section>
+
+    <section title="IANA Considerations">
+      <t>None</t>
+    </section>
+
+    <section title="Acknowledgements">
+      <t>
+        The authors would like to thank the <xref target="BLAKE2"/>
+        designers for answering our questions about BLAKE2 and allowing us to
+        use their object identifier space.  In particular, our email exchanges
+        with Jean-Philippe Aumasson were very helpful.
+      </t>
+    </section>
+  </middle>
+
+  <back>
+    <references title="Normative References">
+      &RFC2119;
+      &RFC2313;
+      &RFC4055;
+      &RFC7693;
+      &RFC8032;
+
+      <reference anchor="BLAKE2" target="https://blake2.net/blake2_20130129.pdf">
+        <front>
+          <title>BLAKE2: simpler, smaller, fast as MD5</title>
+          <author initials="J.-P." surname="Aumasson" fullname="Jean-Philippe Aumasson"/>
+          <author initials="S." surname="Neves" fullname="Samuel Neves"/>
+          <author initials="Z." surname="Wilcox-O’Hearn" fullname="Zooko Wilcox-O’Hearn"/>
+          <author initials="C." surname="Winnerlein" fullname="Christian Winnerlein"/>
+          <date month="January" year="2013"/>
+        </front>
+      </reference>
+
+      <reference anchor="FIPS-186-4" target="https://dx.doi.org/10.6028/NIST.FIPS.186-4">
+        <front>
+          <title>Digital Signature Standard (DSS)</title>
+          <author>
+            <organization>
+              National Institute of Standards and Technology
+            </organization>
+          </author>
+          <date month="July" year="2013"/>
+        </front>
+        <seriesInfo name="FIPS PUB" value="186-4" />
+      </reference>
+
+      <reference anchor="SP-800-131A" target="http://dx.doi.org/10.6028/NIST.SP.800-131Ar1">
+        <front>
+          <title>
+            Transitions: Recommendation for Transitioning the Use of
+            Cryptographic Algorithms and Key Lengths
+          </title>
+          <author initials="E." surname="Barker" fullname="Elaine Barker"/>
+          <author initials="A." surname="Roginsky" fullname="Allen Roginsky"/>
+          <date month="November" year="2015"/>
+        </front>
+        <seriesInfo name="NIST Special Publication" value="800-131A Rev. 1"/>
+      </reference>
+    </references>
+  </back>
+</rfc>
