@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC2313 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2313.xml">
+<!ENTITY RFC4055 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4055.xml">
+<!ENTITY RFC5280 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5280.xml">
+<!ENTITY RFC5758 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5758.xml">
+<!ENTITY RFC7693 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7693.xml">
+<!ENTITY RFC8032 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8032.xml">
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc strict="yes" ?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="3"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
+<rfc category="info" docName="draft-wconner-blake2sigs-01" ipr="trust200902">
+  <front>
+    <title abbrev="">
+      BLAKE2 Algorithms and Identifiers for use in the Internet X.509 Public Key
+      Infrastructure Certificate and Certificate Revocation List (CRL) Profile
+    </title>
+
+    <author fullname="William Conner" initials="W." surname="Conner">
+      <organization>Google</organization>
+      <address>
+        <postal>
+          <street>320 N Morgan St #600</street>
+          <city>Chicago</city>
+          <region>IL</region>
+          <code>60607</code>
+          <country>USA</country>
+        </postal>
+        <email>wconner@google.com</email>
+      </address>
+    </author>
+    <author fullname="Adam Langley" initials="A." surname="Langley">
+      <organization>Google</organization>
+      <address>
+        <postal>
+          <street>340 Main St</street>
+          <city>Venice</city>
+          <region>CA</region>
+          <code>90291</code>
+          <country>USA</country>
+        </postal>
+        <email>agl@google.com</email>
+      </address>
+    </author>
+    <author fullname="Ryan Sleevi" initials="R." surname="Sleevi">
+      <organization>Google</organization>
+      <address>
+        <postal>
+          <street>200 W Franklin St #300</street>
+          <city>Chapel Hill</city>
+          <region>NC</region>
+          <code>27516</code>
+          <country>USA</country>
+        </postal>
+        <email>sleevi@google.com</email>
+      </address>
+    </author>
+    <author fullname="Andrei Popov" initials="A." surname="Popov">
+      <organization>Microsoft</organization>
+      <address>
+        <postal>
+          <street>One Microsoft Way</street>
+          <city>Redmond</city>
+          <region>WA</region>
+          <code>98052</code>
+          <country>USA</country>
+        </postal>
+        <email>Andrei.Popov@microsoft.com</email>
+      </address>
+    </author>
+
+    <date month="April" year="2017" />
+
+    <area>General</area>
+
+    <keyword>BLAKE2</keyword>
+    <keyword>signature</keyword>
+    <keyword>rsa</keyword>
+    <keyword>ecdsa</keyword>
+    <keyword>eddsa</keyword>
+
+    <abstract>
+      <t>
+        This document describes the conventions for using the BLAKE2b-512 hash
+        function with each of the following algorithms:
+        RSA Encryption Scheme - Optimal Asymmetric Encryption Padding (RSAES-OAEP),
+        RSA Probabilistic Signature Scheme (RSASSA-PSS),
+        RSA Public-Key Cryptography Standards #1 version 1.5 (RSASSA PKCS#1 v1.5),
+        Digital Signature Algorithm (DSA),
+        Elliptic Curve Digital Signature Algorithm (ECDSA), and
+        Edwards-curve Digital Signature Algorithm (EdDSA).
+        This specification applies to the Internet X.509 Public Key
+        Infrastructure (PKI) when digital signatures are used to sign
+        certificates and certificate revocation lists (CRLs). This document
+        also specifies the object identifiers for the combinations of
+        the BLAKE2b-512 hash function with the aforementioned algorithms.
+      </t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section title="Introduction">
+      <t>
+        The SHA-2 family of hash functions is currently the only secure and
+        widely supported option for digital signatures in the PKIX ecosystem
+        <xref target="FIPS-180-4"/>. While there is no reason to be seriously
+        concerned about the security of SHA-2, which is still acceptable
+        according to <xref target="SP-800-131A">NIST SP 800-131A rev. 1</xref>,
+        numerous previous hash functions have eventually suffered from collision
+        attacks and needed to be replaced. Since it takes a very long time to
+        establish support for new primitives in the PKIX ecosystem, it seems
+        prudent to have an alternative prepared.
+      </t>
+
+      <t>
+        This document specifies object identifiers to identify the
+        combination of the <xref target="BLAKE2">BLAKE2b-512</xref> hash
+        function with each of RSAES-OAEP, RSASSA-PSS, RSASSA PKCS#1 v1.5, DSA,
+        ECDSA, and EdDSA.
+      </t>
+
+      <t>
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+        document are to be interpreted as described in
+        <xref target="RFC2119"/>.
+      </t>
+    </section>
+
+    <section title="Algorithm Support">
+      <t>
+        This section describes the algorithms and corresponding object
+        identifiers, which may be used in conjunction with the BLAKE2b-512 hash
+        function.
+      </t>
+
+      <section title="BLAKE2b-512 One-Way Hash Function">
+        <t>
+          <xref target="BLAKE2"/> specifies the BLAKE2 family of hash
+          functions, including the BLAKE2b-512 hash function. The BLAKE2b-512
+          hash function is optimized for 64-bit platforms and produces 64-byte
+          message digests.  The object identifier for the BLAKE2b-512 hash
+          algorithm is specified in <xref target="RFC7693"/> and included below
+          for reference.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-blake2b512 OBJECT IDENTIFIER ::= {
+                   iso(1) identified-organization(3) dod(6) internet(1)
+                   private(4) enterprise(1) kudelski(1722) cryptography(12)
+                   hashAlgs(2) blake2b(1) 16
+               }        
+            ]]>
+          </artwork>
+        </figure>
+        <t>
+          The object identifiers for the encryption and signature algorithms
+          that use the BLAKE2b-512 hash function will appear under the
+          following arcs derived from <xref target="RFC7693"/>.
+        </t>      
+        <figure>
+          <artwork>
+            <![CDATA[
+               encAlgs OBJECT IDENTIFIER ::= {
+                   iso(1) identified-organization(3) dod(6) internet(1)
+                   private(4) enterprise(1) kudelski(1722) cryptography(12) 4
+               }        
+            ]]>
+            <![CDATA[
+               sigAlgs OBJECT IDENTIFIER ::= {
+                   iso(1) identified-organization(3) dod(6) internet(1)
+                   private(4) enterprise(1) kudelski(1722) cryptography(12) 5
+               }        
+            ]]>
+          </artwork>
+        </figure>
+      </section>
+
+      <section title="BLAKE2b-512 Mask Generation Function">
+        <t>
+          <xref target="RFC4055"/> specifies the object identifier for the mask
+          generation function MGF1, which is included below for reference.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-mgf1 OBJECT IDENTIFIER ::= {
+                   iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1)
+                   pkcs-1(1) 8
+               }
+            ]]>
+          </artwork>
+        </figure>
+        <t>
+          The algorithm identifiers for the BLAKE2b-512 hash function and the
+          mask generation function MGF1 that uses the BLAKE2b-512 hash function
+          are the following.
+        </t>      
+        <figure>
+          <artwork>
+            <![CDATA[
+               blake2b512Identifier AlgorithmIdentifier ::= {
+                   id-blake2b512, NULL
+               }        
+            ]]>
+            <![CDATA[
+               mgf1Blake2b512Identifier AlgorithmIdentifier ::= {
+                   id-mgf1, blake2b512Identifier
+               }        
+            ]]>
+          </artwork>
+        </figure>
+      </section>
+
+      <section title="RSAES-OAEP with BLAKE2b-512">
+        <t>
+          <xref target="RFC4055"/> specifies the RSAES-OAEP algorithm and
+          parameters.  The sequence for the parameters is included
+          below for reference.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               RSAES-OAEP-params ::= SEQUENCE {
+                   hashFunc    [0] AlgorithmIdentifier
+                                   DEFAULT sha1Identifier,
+                   maskGenFunc [1] AlgorithmIdentifier
+                                   DEFAULT mgf1SHA1Identifier,
+                   pSourceFunc [2] AlgorithmIdentifier
+                                   DEFAULT pSpecifiedEmptyIdentifier
+               }
+            ]]>
+          </artwork>
+        </figure>
+        <t>
+          This section specifies a single object identifier to identify the
+          combination of RSAES-OAEP with BLAKE2b-512.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-RSAEP-OAEP-with-blake2b512 OBJECT IDENTIFIER ::= { engAlgs 1 }
+            ]]>
+          </artwork>
+        </figure>
+        <t>
+          Using id-RSAEP-OAEP-with-blake2b512 requires the following
+          RSAES-OAEP parameters.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               RSAES-OAEP-blake2b512-params RSAES-OAEP-params ::=  {
+                   hashFunc blake2b512Identifier,
+                   maskGenFunc mgf1Blake2b512Identifier,
+                   pSourceFunc pSpecifiedEmptyIdentifier
+               }
+            ]]>
+          </artwork>
+        </figure>
+      </section>
+
+      <section title="RSASSA-PSS with BLAKE2b-512">
+        <t>
+          <xref target="RFC4055"/> specifies the RSASSA-PSS algorithm and
+          parameters.  The sequence for the parameters is included
+          below for reference.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               RSASSA-PSS-params ::= SEQUENCE {
+                   hashAlgorithm    [0] HashAlgorithm
+                                        DEFAULT sha1Identifier,
+                   maskGenAlgorithm [1] MaskGenAlgorithm
+                                        DEFAULT mgf1SHA1Identifier,
+                   saltLength       [2] INTEGER DEFAULT 20,
+                   trailerField     [3] INTEGER DEFAULT 1
+               }
+            ]]>
+          </artwork>
+        </figure>
+        <t>
+          This section specifies a single object identifier to identify the
+          combination of RSASSA-PSS with BLAKE2b-512.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-RSASSA-PSS-with-blake2b512 OBJECT IDENTIFIER ::= { sigAlgs 1 }
+            ]]>
+          </artwork>
+        </figure>
+        <t>
+          Using id-RSASSA-PSS-with-blake2b512 requires the following
+          RSASSA-PSS parameters.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               RSASSA-PSS-blake2b512-params RSASSA-PSS-params ::=  {
+                   hashAlgorithm blake2b512Identifier,
+                   maskGenAlgorithm mgf1Blake2b512Identifier,
+                   saltLength 20,
+                   trailerField 1
+               }
+            ]]>
+          </artwork>
+        </figure>
+      </section>
+
+      <section title="RSASSA PKCS#1 v1.5 with BLAKE2b-512">
+        <t>
+          <xref target="RFC2313"/> specifies the RSASSA PKCS #1 v1.5
+          signature algorithm. This section specifies a single object identifier
+          to identify the combination of RSASSA PKCS#1 v1.5 with BLAKE2b-512.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-rsassa-pkcs1-v1_5-with-blake2b512 OBJECT IDENTIFIER
+                                                    ::= { sigAlgs 2 }
+            ]]>
+          </artwork>
+        </figure>
+      </section>
+
+      <section title="DSA with BLAKE2b-512">
+        <t>
+          <xref target="FIPS-186-4">NIST FIPS PUB 186-4</xref>
+          specifies the DSA signature algorithm.  This section specifies a
+          single object identifier to identify the combination of DSA with
+          BLAKE2b-512.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-dsa-with-blake2b512 OBJECT IDENTIFIER ::= { sigAlgs 3 }
+            ]]>
+          </artwork>
+        </figure>
+        <!-- <t>
+          When the id-dsa-with-blake2b512 algorithm identifier appears in the
+          algorithm field as an AlgorithmIdentifier, the encoding MUST omit the
+          parameters field.  That is, the AlgorithmIdentifier SHALL be a
+          SEQUENCE of one component, the object identifier id-dsa-with-blake2b512.
+        </t>  -->
+      </section>
+
+      <section title="ECDSA with BLAKE2b-512">
+        <t>
+          <xref target="FIPS-186-4">NIST FIPS PUB 186-4</xref>
+          specifies the ECDSA signature algorithm. <xref target="RFC5758"/>
+          specifies identifiers for using the SHA-2 family of hash functions
+          with ECDSA.  This section specifies a single object identifier to
+          identify the combination of ECDSA with BLAKE2b-512.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-ecdsa-with-blake2b512 OBJECT IDENTIFIER ::= { sigAlgs 4 }
+            ]]>
+          </artwork>
+        </figure>
+        <!-- <t>
+          When the id-ecdsa-with-blake2b512 algorithm identifier appears in the
+          algorithm field as an AlgorithmIdentifier, the encoding MUST omit the
+          parameters field.  That is, the AlgorithmIdentifier SHALL be a
+          SEQUENCE of one component, the object identifier id-ecdsa-with-blake2b512.
+        </t> -->
+      </section>
+
+      <section title="EdDSA with BLAKE2b-512">
+        <t>
+          <xref target="RFC8032"/> specifies the EdDSA
+          algorithm. This section specifies a single object identifier to
+          identify the combination of EdDSA with the edwards448 curve and
+          BLAKE2b-512 hash function.
+        </t>
+        <figure>
+          <artwork>
+            <![CDATA[
+               id-Ed448-with-blake2b512 OBJECT IDENTIFIER ::= { sigAlgs 5 }
+            ]]>
+          </artwork>
+        </figure>
+      </section>
+
+    </section>
+
+    <section title="Security Considerations">
+      <t>
+        For BLAKE2-specific security considerations, Section 4 of
+        <xref target="BLAKE2"/> includes a brief security analysis of the
+        BLAKE2 hash algorithm.  The BLAKE hash algorithm, which was the
+        predecessor of BLAKE2, was analyzed as part of the SHA-3 competition
+        <xref target="BLAKE"/>. The BLAKE2 hash algorithm builds on BLAKE with
+        some tweaks.  
+      </t>
+      <t>
+        For general PKIX Certificate and CRL Profile security considerations,
+        Section 8 of <xref target="RFC5280"/> provides a good overview.
+      </t>
+    </section>
+
+    <section title="IANA Considerations">
+      <t>
+        Although the algorithm identifiers are currently specified under the
+        object identifier arc specified in <xref target="RFC7693"/>, the authors
+        would not oppose the assignment of these algorithms to object
+        identifiers in a more suitable location under the IANA object identifier
+        space in future drafts.
+      </t>
+    </section>
+
+    <section title="Acknowledgements">
+      <t>
+        The authors would like to thank the <xref target="BLAKE2"/>
+        designers for answering our questions about BLAKE2 and allowing us to
+        use their object identifier space.  In particular, our email exchanges
+        with Jean-Philippe Aumasson were very helpful.
+      </t>
+      <t>
+        The authors would also like to thank the participants of the LAMPS
+        working group who provided valuable feedback.
+      </t>
+    </section>
+  </middle>
+
+  <back>
+    <references title="Normative References">
+      &RFC2119;
+      &RFC2313;
+      &RFC4055;
+      &RFC5280;
+      &RFC5758;
+      &RFC7693;
+      &RFC8032;
+
+      <reference anchor="BLAKE" target="https://131002.net/blake/blake.pdf">
+        <front>
+          <title>SHA-3 proposal BLAKE</title>
+          <author initials="J.-P." surname="Aumasson" fullname="Jean-Philippe Aumasson"/>
+          <author initials="L." surname="Henzen" fullname="Luca Henzen"/>
+          <author initials="W." surname="Meier" fullname="Willi Meier"/>
+          <author initials="R." surname="Phan" fullname="Raphael C.-W. Phan"/>
+          <date month="December" year="2010"/>
+        </front>
+      </reference>
+
+      <reference anchor="BLAKE2" target="https://blake2.net/blake2_20130129.pdf">
+        <front>
+          <title>BLAKE2: simpler, smaller, fast as MD5</title>
+          <author initials="J.-P." surname="Aumasson" fullname="Jean-Philippe Aumasson"/>
+          <author initials="S." surname="Neves" fullname="Samuel Neves"/>
+          <author initials="Z." surname="Wilcox-O’Hearn" fullname="Zooko Wilcox-O’Hearn"/>
+          <author initials="C." surname="Winnerlein" fullname="Christian Winnerlein"/>
+          <date month="January" year="2013"/>
+        </front>
+      </reference>
+
+      <reference anchor="FIPS-180-4" target="https://dx.doi.org/10.6028/NIST.FIPS.180-4.pdf">
+        <front>
+          <title>Secure Hash Standard (SHS)</title>
+          <author>
+            <organization>
+              National Institute of Standards and Technology
+            </organization>
+          </author>
+          <date month="August" year="2015"/>
+        </front>
+        <seriesInfo name="FIPS PUB" value="180-4" />
+      </reference>
+
+      <reference anchor="FIPS-186-4" target="https://dx.doi.org/10.6028/NIST.FIPS.186-4">
+        <front>
+          <title>Digital Signature Standard (DSS)</title>
+          <author>
+            <organization>
+              National Institute of Standards and Technology
+            </organization>
+          </author>
+          <date month="July" year="2013"/>
+        </front>
+        <seriesInfo name="FIPS PUB" value="186-4" />
+      </reference>
+
+      <reference anchor="SP-800-131A" target="http://dx.doi.org/10.6028/NIST.SP.800-131Ar1">
+        <front>
+          <title>
+            Transitions: Recommendation for Transitioning the Use of
+            Cryptographic Algorithms and Key Lengths
+          </title>
+          <author initials="E." surname="Barker" fullname="Elaine Barker"/>
+          <author initials="A." surname="Roginsky" fullname="Allen Roginsky"/>
+          <date month="November" year="2015"/>
+        </front>
+        <seriesInfo name="NIST Special Publication" value="800-131A Rev. 1"/>
+      </reference>
+    </references>
+  </back>
+</rfc>
